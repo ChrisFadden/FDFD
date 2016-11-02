@@ -50,8 +50,8 @@ Psi = reshape(Psi,grid.Nx,grid.Ny);
 Pref = Psi(:,pmlY+1);
 Ptrn = Psi(:,grid.Ny - pmlY);
 phase =  exp(+i * (2*pi / grid.lam0) * [0:grid.Nx]'*grid.dx);
-Pref = Pref .* phase;
-Ptrn = Ptrn .* phase;
+%Pref = Pref .* phase;
+%Ptrn = Ptrn .* phase;
 
 
 imagesc([0:grid.Nx-1]*grid.dx,[0:grid.Ny-1]*grid.dy,real(Psi)');

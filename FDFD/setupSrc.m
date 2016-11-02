@@ -19,9 +19,9 @@ fsrc  = fsrc(:);
 Q = zeros(grid.Nx,grid.Ny);
 
 Q(:,1:pmlY+2) = 1;
-%Q(1:pmlX+2,:) = 1;
+Q(1:pmlX+2,:) = 1;
 Q(:,grid.Ny-(pmlY+2):grid.Ny) = 1;
-%Q(grid.Nx-(pmlX+2):grid.Nx,:) = 1;
+Q(grid.Nx-(pmlX+2):grid.Nx,:) = 1;
 
 % Q(:,1:20+2) = 0;
 % Q(1:20+2,:) = 0;
