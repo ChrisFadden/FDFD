@@ -3,8 +3,8 @@ clc;
 
 grid = importdata('Grid.dat');
 urd = 1.0;
-erd1 = 1.0;
-erd2 = 3.0;
+erd1 = -1000;
+erd2 = 1.0;
 
 %Initialize Layers to device
 UR = urd * ones(grid(4),grid(5));

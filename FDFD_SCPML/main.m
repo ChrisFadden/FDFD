@@ -3,9 +3,10 @@ clc;
 
 %Main Function for FDFD
 %%  Simulation Parameters
-fn = '../device/Triangle/';
+fn = '../device/Free Space/';
 pmlFlag = true;
-pol = 'TM';
+srcAngle = 90;
+pol = 'TE';
 
 %%  Grid Calculation
 grid = setupGrid(strcat(fn,'Grid.dat'));
@@ -26,37 +27,34 @@ end
 device = [];
 device = setupDevice(fn,device,pml);
 
+Sx = diag(sparse(1 ./ pml.sx(:)));
+Sy = diag(sparse(1 ./ pml.sy(:)));
+
 %%  Derivative Operator
 %Derivative Matrices
 [DEX,DEY,DHX,DHY] = yeeder(grid);
 
 switch pol
     case 'TM',
-        A = DHX/device.URyy*DEX + DHY/device.URxx*DEY + device.ERzz;
+        A = Sx*DHX/device.URyy*Sx*DEX + Sy*DHY/device.URxx*Sy*DEY + device.ERzz;
     case 'TE',
-        A = DEX/device.ERyy*DHX + DEY/device.ERxx*DHY + device.URzz;
+        A = Sx*DEX/device.ERyy*Sx*DHX + Sy*DEY/device.ERxx*Sy*DHY + device.URzz;
     otherwise,
         error('Unrecognized polarization.');
 end
-condest(A)
+
 %%  Source Calculation
-src = setupSrc(grid,A,pmlX,pmlY);
+src = setupSrc(grid,A,pmlX,pmlY,srcAngle);
 
 %%  Compute Field
-Psi = A\src;                  
+Psi = A\src;
+
 Psi = full(Psi);
 Psi = reshape(Psi,grid.Nx,grid.Ny);
 
-Pref = Psi(:,pmlY+1);
-Ptrn = Psi(:,grid.Ny - pmlY);
-phase =  exp(+i * (2*pi / grid.lam0) * [0:grid.Nx]'*grid.dx);
-%Pref = Pref .* phase;
-%Ptrn = Ptrn .* phase;
-
-
-imagesc([0:grid.Nx-1]*grid.dx,[0:grid.Ny-1]*grid.dy,real(Psi)');
+subplot(2,2,3)
+imagesc([0:grid.Nx-1]*grid.dx / (10e-6),[0:grid.Ny-1]*grid.dy / (10e-6),real(Psi)');
 xlabel('x (\mum)');
 ylabel('y (\mum)');
-title('E_z FIELD');
+title('E_z FIELD (TM Polarized)');
 colorbar;
-

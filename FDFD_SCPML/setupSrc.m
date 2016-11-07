@@ -1,6 +1,6 @@
-function [src] = setupSrc(grid,A,pmlX,pmlY)
+function [src] = setupSrc(grid,A,pmlX,pmlY,srcAngle)
 degrees = pi / 180;
-theta = 45 * degrees;
+theta = srcAngle * degrees;
 kinc = 2*pi / grid.lam0 * [sin(theta);cos(theta)];
 %kinc = 1 / grid.lam0 * [sin(theta);cos(theta)];
 
@@ -8,10 +8,14 @@ kinc = 2*pi / grid.lam0 * [sin(theta);cos(theta)];
 xa    = [0:grid.Nx-1]*grid.dx;
 ya    = [0:grid.Ny-1]*grid.dy;
 [Y,X] = meshgrid(ya,xa);
-NumLambda = (2*pi);
-fsrc  = exp(NumLambda / (2*pi) * (-1i*(kinc(1)*X+kinc(2)*Y)));
+NumLambda = 1;
+fsrc  = exp(NumLambda * (-1i*(kinc(1)*X+kinc(2)*Y)));
 
 %fsrc = cos(kinc(1) * X) + cos(kinc(2) * Y);
+subplot(2,2,2)
+imagesc(real(fsrc)');
+colorbar;
+title('Source');
 
 fsrc  = fsrc(:);
 
