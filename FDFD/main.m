@@ -38,7 +38,6 @@ switch pol
     otherwise,
         error('Unrecognized polarization.');
 end
-condest(A)
 %%  Source Calculation
 src = setupSrc(grid,A,pmlX,pmlY);
 

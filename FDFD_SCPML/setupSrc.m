@@ -1,7 +1,7 @@
 function [src] = setupSrc(grid,A,pmlX,pmlY,srcAngle)
 degrees = pi / 180;
 theta = srcAngle * degrees;
-kinc = 2*pi / grid.lam0 * [sin(theta);cos(theta)];
+src.kinc = 2*pi / grid.lam0 * [sin(theta);cos(theta)];
 %kinc = 1 / grid.lam0 * [sin(theta);cos(theta)];
 
 % COMPUTE SOURCE FIELD
@@ -9,9 +9,8 @@ xa    = [0:grid.Nx-1]*grid.dx;
 ya    = [0:grid.Ny-1]*grid.dy;
 [Y,X] = meshgrid(ya,xa);
 NumLambda = 1;
-fsrc  = exp(NumLambda * (-1i*(kinc(1)*X+kinc(2)*Y)));
-
-%fsrc = cos(kinc(1) * X) + cos(kinc(2) * Y);
+fsrc  = exp(NumLambda * (-1i*(src.kinc(1)*X+src.kinc(2)*Y)));
+src.fsrc = fsrc;
 subplot(2,2,2)
 imagesc(real(fsrc)');
 colorbar;
@@ -32,7 +31,6 @@ Q(grid.Nx-(pmlX+2):grid.Nx,:) = 1;
 % Q(:,grid.Ny+1-(20+2):grid.Ny) = 0;
 % Q(grid.Nx+1-(20+2):grid.Nx,:) = 0;
 
-
 Q = diag(sparse(Q(:)));
 
 %Just TF useful debugging tool
@@ -44,8 +42,11 @@ Q = diag(sparse(Q(:)));
 %  fsrcSF = reshape(fsrcSF,[grid.Nx,grid.Ny]);
 %imagesc(real(fsrcSF + fsrcTF)')
 
+src.SF = reshape(Q*fsrc,[grid.Nx,grid.Ny]);
+src.SF(1:pmlX+1,:) = 0;
+
 % COMPUTE SOURCE VECTOR
-src = (Q*A-A*Q)*fsrc;
+src.vec = (Q*A-A*Q)*fsrc;
 %src = fsrcTF;
 %grid.Nx
 %grid.Ny
