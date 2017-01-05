@@ -8,8 +8,8 @@ xa    = [0:grid.Nx-1]*grid.dx;
 ya    = [0:grid.Ny-1]*grid.dy;
 [Y,X] = meshgrid(ya,xa);
 
-fsrc  = exp((-1i*(kinc(1)*X))).*besselj(0,kinc(2)*Y);
-%fsrc = exp((-1i*(kinc(1)*X + kinc(2)*Y)));
+%fsrc  = exp((-1i*(kinc(1)*X))).*besselj(0,kinc(2)*Y);
+fsrc = exp((-1i*(kinc(1)*X + kinc(2)*Y)));
 
 fsrc  = fsrc(:);
 

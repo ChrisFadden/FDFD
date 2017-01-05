@@ -9,7 +9,7 @@ srcAngle = 0;
 
 %%  Grid Calculation
 grid = setupGrid(strcat(fn,'Grid.dat'));
-NLambda = grid.lam0 / grid.dx;
+NLambda = grid.lam0 ./ grid.dx;
 
 %%  Device Calculation (UPML)
  percentPML = 10 * 0.01;
@@ -34,33 +34,31 @@ Sr = diag(sparse(1 ./ pml.sy(:)));
 %Derivative Matrices
 [DEZ,DER,DHZ,DHR] = yeeder(grid);
 
-%rho = grid.dy:grid.dy:grid.Ly;
-%dr = (2*pi/grid.lam0)*grid.dy;
-%rho = dr:dr:grid.Ly*(2*pi/grid.lam0);
-rho = (1:grid.Ny)./grid.dy;
-
-invRho = speye(grid.Nx*grid.Ny);
+dr = grid.Ly / grid.Ny;% * (2*pi/grid.lam0);
+rho = (1:grid.Ny).*dr;
+DHR1 = DHR;
 jj = 1;
-s = 0;
 for ii = 1:grid.Nx*grid.Ny
-    invRho(ii,ii) = 1/rho(jj);
+    DHR1(:,ii) = DHR1(:,ii)/rho(jj);
     if(jj == length(rho))
         jj = 0;
     end
     jj = jj+1;
 end
 
-Az = Sz*DHZ/device.URyy*Sz*DEZ;
-Ar1 = Sr*DHR/device.URxx*Sr*DER;
-Ar2 = Sr*DHR/device.URxx*invRho;
+%Az = Sz*DHZ/device.URyy*Sz*DEZ;
+%Ar1 = Sr*DHR/device.URxx*Sr*DER;
+Az = DHZ/device.URyy*DEZ;
+Ar1 = DHR/device.URxx*DER;
+Ar2 = DHR1/device.URxx;
 A = Az + Ar1 + Ar2 + device.ERzz;
-%A = Ar1 + Ar2 + device.ERzz;
-
+A = Ar2;
 %%  Source Calculation
 src = setupSrc(grid,A,pmlX,pmlY,srcAngle);
 
 %%  Compute Field
 Psi = A\src;
+
 toc
 Psi = full(Psi);
 Psi = reshape(Psi,grid.Nx,grid.Ny);
