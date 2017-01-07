@@ -9,7 +9,10 @@ xa    = [0:grid.Nx-1]*grid.dx;
 ya    = [0:grid.Ny-1]*grid.dy;
 [Y,X] = meshgrid(ya,xa);
 NumLambda = 1;
-fsrc  = exp(NumLambda * (-1i*(src.kinc(1)*X+src.kinc(2)*Y)));
+%fsrc  = exp(NumLambda * (-1i*(src.kinc(1)*X+src.kinc(2)*Y)));
+w = 8;
+k0 = 2*pi / grid.lam0;
+fsrc = exp(-(k0*(X-2.5*grid.lam0)/w).^2) .* exp(1j * k0 *Y); 
 src.fsrc = fsrc;
 subplot(2,2,2)
 imagesc(real(fsrc)');

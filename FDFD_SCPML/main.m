@@ -3,9 +3,9 @@ clc;
 
 %Main Function for FDFD
 %%  Simulation Parameters
-fn = '../device/Circle/';
+fn = '../device/Free Space/';
 pmlFlag = true;
-srcAngle = 90;
+srcAngle = 0;
 pol = 'TM';
 
 %%  Grid Calculation
