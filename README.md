@@ -1,2 +1,2 @@
-# MOL
-Method of Lines Implementation
+# FDFD
+Various Finite Difference Frequency Domain Implementations
